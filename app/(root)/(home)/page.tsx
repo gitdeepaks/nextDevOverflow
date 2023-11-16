@@ -4,8 +4,38 @@ import Link from "next/link";
 
 import { HomePageFilters } from "@/constants/filters";
 
-import Filter from "../../../components/shared/Filter";
+import Filter from "@/components/shared/Filter";
 import HomeFilters from "@/components/home/HomeFilters";
+import NoResults from "@/components/shared/NoResults";
+
+const questions: any[] = [
+  // {
+  //   _id: 1,
+  //   title: "Cascading Delete in SQLAIchemy? ",
+  //   tags: [
+  //     { _id: 1, name: "python" },
+  //     { _id: 2, name: "sql" },
+  //   ],
+  //   auther: "John Doe",
+  //   upvotes: 10,
+  //   answers: 2,
+  //   views: 100,
+  //   createdAt: "2021-08-28T12:28:10.000Z",
+  // },
+  // {
+  //   _id: 2,
+  //   title: "How to center a div? ",
+  //   tags: [
+  //     { _id: 1, name: "python" },
+  //     { _id: 2, name: "sql" },
+  //   ],
+  //   auther: "John Doe",
+  //   upvotes: 10,
+  //   answers: 2,
+  //   views: 100,
+  //   createdAt: "2021-08-28T12:28:10.000Z",
+  // },
+];
 
 export default function Home() {
   return (
@@ -34,6 +64,14 @@ export default function Home() {
         />
       </div>
       <HomeFilters />
+
+      <div className="mt-10 flex w-full flex-col gap-6">
+        {questions.length === 0 ? (
+          questions.map((question) => "QuestionCard")
+        ) : (
+          <NoResults />
+        )}
+      </div>
     </>
   );
 }
