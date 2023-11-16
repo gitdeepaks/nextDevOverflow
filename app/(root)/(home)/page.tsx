@@ -7,34 +7,35 @@ import { HomePageFilters } from "@/constants/filters";
 import Filter from "@/components/shared/Filter";
 import HomeFilters from "@/components/home/HomeFilters";
 import NoResults from "@/components/shared/NoResults";
+import QuestionCard from "@/components/cards/QuestionCard";
 
-const questions: any[] = [
-  // {
-  //   _id: 1,
-  //   title: "Cascading Delete in SQLAIchemy? ",
-  //   tags: [
-  //     { _id: 1, name: "python" },
-  //     { _id: 2, name: "sql" },
-  //   ],
-  //   auther: "John Doe",
-  //   upvotes: 10,
-  //   answers: 2,
-  //   views: 100,
-  //   createdAt: "2021-08-28T12:28:10.000Z",
-  // },
-  // {
-  //   _id: 2,
-  //   title: "How to center a div? ",
-  //   tags: [
-  //     { _id: 1, name: "python" },
-  //     { _id: 2, name: "sql" },
-  //   ],
-  //   auther: "John Doe",
-  //   upvotes: 10,
-  //   answers: 2,
-  //   views: 100,
-  //   createdAt: "2021-08-28T12:28:10.000Z",
-  // },
+const questions = [
+  {
+    _id: 1,
+    title: "Cascading Delete in SQLAlchemy?",
+    tags: [
+      { _id: 1, name: "python" },
+      { _id: 2, name: "sql" },
+    ],
+    auther: "John Doe",
+    upvotes: 10,
+    answers: 2,
+    views: 100,
+    createdAt: "2021-08-28T12:28:10.000Z",
+  },
+  {
+    _id: 2,
+    title: "How to center a div?",
+    tags: [
+      { _id: 1, name: "python" },
+      { _id: 2, name: "sql" },
+    ],
+    auther: "John Doe",
+    upvotes: 10,
+    answers: 2,
+    views: 100,
+    createdAt: "2021-08-28T12:28:10.000Z",
+  },
 ];
 
 export default function Home() {
@@ -66,10 +67,28 @@ export default function Home() {
       <HomeFilters />
 
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questions.length === 0 ? (
-          questions.map((question) => "QuestionCard")
+        {questions.length > 0 ? (
+          questions.map((question) => (
+            <QuestionCard
+              key={question._id}
+              _id={question._id}
+              title={question.title}
+              tags={question.tags}
+              auther={question.auther}
+              upvotes={question.upvotes}
+              views={question.views}
+              answers={question.answers}
+            />
+          ))
         ) : (
-          <NoResults />
+          <NoResults
+            title="There’s no question to show"
+            description="Be the first to break the silence! 🚀 Ask a Question and kickstart the
+          discussion. our query could be the next big thing others learn from. Get
+          involved! 💡"
+            link="/ask-question"
+            linkTitle="Ask a Question"
+          />
         )}
       </div>
     </>
