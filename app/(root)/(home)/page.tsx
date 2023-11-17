@@ -11,30 +11,38 @@ import QuestionCard from "@/components/cards/QuestionCard";
 
 const questions = [
   {
-    _id: 1,
-    title: "Cascading Delete in SQLAlchemy?",
+    _id: "1",
+    title: "Cascading Deletes in SQLAlchemy?",
     tags: [
-      { _id: 1, name: "python" },
-      { _id: 2, name: "sql" },
+      { _id: "1", name: "python" },
+      { _id: "2", name: "sql" },
     ],
-    auther: "John Doe",
-    upvotes: 10,
-    answers: 2,
-    views: 100,
-    createdAt: "2021-08-28T12:28:10.000Z",
+    author: {
+      _id: "1",
+      name: "John Doe",
+      picture: "john-doe.jpg",
+    },
+    upvotes: 15,
+    views: 50,
+    answers: [],
+    createdAt: new Date("2023-09-01T12:00:00.000Z"),
   },
   {
-    _id: 2,
+    _id: "2",
     title: "How to center a div?",
     tags: [
-      { _id: 1, name: "python" },
-      { _id: 2, name: "sql" },
+      { _id: "3", name: "css" },
+      { _id: "4", name: "html" },
     ],
-    auther: "John Doe",
-    upvotes: 10,
-    answers: 2,
-    views: 100,
-    createdAt: "2021-08-28T12:28:10.000Z",
+    author: {
+      _id: "2",
+      name: "Jane Smith",
+      picture: "jane-smith.jpg",
+    },
+    upvotes: 5,
+    views: 50,
+    answers: [],
+    createdAt: new Date("2021-09-02T10:30:00.000Z"),
   },
 ];
 
@@ -74,10 +82,11 @@ export default function Home() {
               _id={question._id}
               title={question.title}
               tags={question.tags}
-              auther={question.auther}
+              author={question.author}
               upvotes={question.upvotes}
               views={question.views}
               answers={question.answers}
+              createdAt={question.createdAt}
             />
           ))
         ) : (

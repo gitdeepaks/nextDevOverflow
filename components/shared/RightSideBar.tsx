@@ -6,33 +6,33 @@ import RenderTags from "./RenderTags";
 const RightSideBar = () => {
   const hotQuestions = [
     {
-      _id: 1,
+      _id: "1",
       title: "How do I use the express module in node.js?",
     },
     {
-      _id: 2,
+      _id: "2",
       title: "How do I use the custom express module in Next.js?",
     },
     {
-      _id: 3,
+      _id: "3",
       title: "How do I use the express module in React.js?",
     },
     {
-      _id: 4,
+      _id: "4",
       title: "How do I use the express module in Vue.js?",
     },
     {
-      _id: 5,
+      _id: "5",
       title: "How do I use the express module in Nest.js?",
     },
   ];
 
   const popularTages = [
-    { _id: 1, name: "javascript", totalQuestions: 5 },
-    { _id: 2, name: "react", totalQuestions: 5 },
-    { _id: 3, name: "veu", totalQuestions: 6 },
-    { _id: 4, name: "node", totalQuestions: 2 },
-    { _id: 5, name: "redux", totalQuestions: 10 },
+    { _id: "1", name: "javascript", totalQuestions: 5 },
+    { _id: "2", name: "react", totalQuestions: 5 },
+    { _id: "3", name: "veu", totalQuestions: 6 },
+    { _id: "4", name: "node", totalQuestions: 2 },
+    { _id: "5", name: "redux", totalQuestions: 10 },
   ];
   return (
     <section className="background-light900_dark200 light-border custom-scrollbar sticky right-0 top-0 flex h-screen w-[350px] flex-col overflow-y-auto border-l p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden">
