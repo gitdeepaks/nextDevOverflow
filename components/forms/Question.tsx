@@ -1,8 +1,9 @@
 "use client";
-
+import React, { useRef, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -12,20 +13,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { QuestionsSchema } from "@/lib/validation";
-import React, { useRef, useState } from "react";
-import { Editor } from "@tinymce/tinymce-react";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-
 import { createQuestion } from "@/lib/actions/question.action";
+import { useRouter, usePathname } from "next/navigation";
 
 const type: any = "create";
-const Question = () => {
+
+interface Props {
+  mongoUserId: string;
+}
+
+const Question = ({ mongoUserId }: Props) => {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
@@ -40,11 +46,24 @@ const Question = () => {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
+
     try {
-      await createQuestion({});
+      // make an async call to your API -> create a question
+      // contain all form data
+
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+        path: pathname,
+      });
+
+      // navigate to home page
+      router.push("/");
     } catch (error) {
     } finally {
-      // setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -62,16 +81,17 @@ const Question = () => {
         if (tagValue.length > 15) {
           return form.setError("tags", {
             type: "required",
-            message: "Tag length must be less than 15 characters",
+            message: "Tag must be less than 15 characters.",
           });
         }
+
         if (!field.value.includes(tagValue as never)) {
           form.setValue("tags", [...field.value, tagValue]);
           tagInput.value = "";
           form.clearErrors("tags");
-        } else {
-          form.trigger();
         }
+      } else {
+        form.trigger();
       }
     }
   };
@@ -81,6 +101,7 @@ const Question = () => {
 
     form.setValue("tags", newTags);
   };
+
   return (
     <Form {...form}>
       <form
@@ -88,22 +109,21 @@ const Question = () => {
         className="flex w-full flex-col gap-10"
       >
         <FormField
-          name="title"
           control={form.control}
+          name="title"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
                 Question Title <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl className="mt-3.5 ">
+              <FormControl className="mt-3.5">
                 <Input
-                  className="no-focus background-light900_dark300 light-border-2 paragraph-regular text-dark300_light700 min-h-[56px] border"
-                  placeholder=""
+                  className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                   {...field}
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Be Specific and imagine you&apos;re asking a question to another
+                Be specific and imagine you&apos;re asking a question to another
                 person.
               </FormDescription>
               <FormMessage className="text-red-500" />
@@ -111,20 +131,19 @@ const Question = () => {
           )}
         />
         <FormField
-          name="explanation"
           control={form.control}
+          name="explanation"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Details Explaination of your problem
+                Detailed explanation of your problem{" "}
                 <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl className="mt-3.5 ">
+              <FormControl className="mt-3.5">
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onInit={(evt, editor) => {
                     // @ts-ignore
-
                     editorRef.current = editor;
                   }}
                   onBlur={field.onBlur}
@@ -153,7 +172,7 @@ const Question = () => {
                     toolbar:
                       "undo redo | " +
                       "codesample | bold italic forecolor | alignleft aligncenter |" +
-                      "alignright alignjustify | bullist numlist ",
+                      "alignright alignjustify | bullist numlist",
                     content_style: "body { font-family:Inter; font-size:16px }",
                   }}
                 />
@@ -167,20 +186,21 @@ const Question = () => {
           )}
         />
         <FormField
-          name="tags"
           control={form.control}
+          name="tags"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
                 Tags <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl className="mt-3.5 ">
+              <FormControl className="mt-3.5">
                 <>
                   <Input
-                    className="no-focus background-light900_dark300 light-border-2 paragraph-regular text-dark300_light700 min-h-[56px] border"
-                    placeholder="Add Tags..."
+                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                    placeholder="Add tags..."
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
+
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 gap-2.5">
                       {field.value.map((tag: any) => (
@@ -190,10 +210,9 @@ const Question = () => {
                           onClick={() => handleTagRemove(tag, field)}
                         >
                           {tag}
-
                           <Image
                             src="/assets/icons/close.svg"
-                            alt="close icon"
+                            alt="Close icon"
                             width={12}
                             height={12}
                             className="cursor-pointer object-contain invert-0 dark:invert"
@@ -205,7 +224,7 @@ const Question = () => {
                 </>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
-                Add up to 3 tags to describe what your question is about. you
+                Add up to 3 tags to describe what your question is about. You
                 need to press enter to add a tag.
               </FormDescription>
               <FormMessage className="text-red-500" />
@@ -220,7 +239,7 @@ const Question = () => {
           {isSubmitting ? (
             <>{type === "edit" ? "Editing..." : "Posting..."}</>
           ) : (
-            <>{type === "edit" ? "Edit Question" : "As a Question"}</>
+            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
           )}
         </Button>
       </form>
