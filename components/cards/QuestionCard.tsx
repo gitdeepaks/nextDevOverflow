@@ -73,13 +73,15 @@ const QuestionCard = ({
           title=" Votes"
           textStyles="small-medium text-dark400_light800"
         />
+
         <Metric
-          imgUrl="/assets/icons/message.svg"
-          alt="message"
-          value={formatAndDivideNumber(answers.length)}
+          imgUrl="/assets/icons/eye.svg"
+          alt="eye"
+          value={formatAndDivideNumber(answers?.length ?? 0)}
           title=" Answers"
           textStyles="small-medium text-dark400_light800"
         />
+
         <Metric
           imgUrl="/assets/icons/eye.svg"
           alt="eye"
