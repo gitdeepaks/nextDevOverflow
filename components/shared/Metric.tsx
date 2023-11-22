@@ -5,7 +5,7 @@ import React from "react";
 interface MetricProps {
   imgUrl: string;
   alt: string;
-  value: string | number;
+  value: string | number | undefined;
   title: string;
   href?: string;
   textStyles?: string;
