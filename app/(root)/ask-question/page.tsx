@@ -1,8 +1,6 @@
 import Question from "@/components/forms/Question";
 import { getUserbyId } from "@/lib/actions/user.action";
-import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import { junit } from "node:test/reporters";
 import React from "react";
 
 const Page = async () => {
