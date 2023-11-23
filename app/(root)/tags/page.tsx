@@ -54,7 +54,7 @@ const Page = async () => {
             title="No tags found"
             description="It looks like there are no tags are found"
             link="/ask-question"
-            linkTitle="Ask a question"
+            linkTitle="Ask a question..."
           />
         )}
       </section>
