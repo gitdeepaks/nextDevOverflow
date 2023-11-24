@@ -1,5 +1,7 @@
+import Answers from "@/components/forms/Answers";
 import Metric from "@/components/shared/Metric";
 import ParseHTML from "@/components/shared/ParseHTML";
+import RenderTags from "@/components/shared/RenderTags";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { formatAndDivideNumber, getTimestamp } from "@/lib/utils";
 import Image from "next/image";
@@ -62,6 +64,18 @@ const page = async ({ params, searchParams }) => {
       </div>
 
       <ParseHTML data={result.content} />
+
+      <div className="mt-8 flex flex-wrap gap-2">
+        {result.tags.map((tag: any) => (
+          <RenderTags
+            key={tag._id}
+            _id={tag._id}
+            name={tag.name}
+            showCount={false}
+          />
+        ))}
+      </div>
+      <Answers />
     </>
   );
 };
