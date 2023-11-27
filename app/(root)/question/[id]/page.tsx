@@ -43,10 +43,10 @@ const page = async ({ params, searchParams }) => {
           </Link>
           <div className="flex justify-end">
             <Votes
-              type="question"
+              type="Question"
               itemId={JSON.stringify(result._id)}
               userId={JSON.stringify(mongoUser._id)}
-              upvotes={result.upvotes}
+              upvotes={result.upvotes.length}
               hasupVoted={result.upvotes.includes(mongoUser._id)}
               downvotes={result.downvotes.length}
               hasdownVoted={result.downvotes.includes(mongoUser._id)}
@@ -58,7 +58,7 @@ const page = async ({ params, searchParams }) => {
           {result.title}
         </h2>
       </div>
-      <div className="mb-8 mt-5 flex flex-wrap gap-4">
+      <div className="my-5 flex flex-wrap gap-5">
         <Metric
           imgUrl="/assets/icons/clock.svg"
           alt="clock icon"
