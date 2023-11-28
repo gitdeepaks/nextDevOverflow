@@ -13,6 +13,7 @@ import {
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
+import { Tag } from "lucide-react";
 
 export async function getUserbyId(params: any) {
   try {
@@ -137,12 +138,10 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 
     const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
 
-    // Make sure the type of 'searchQuery' is string and it matches the expected schema type
     const query: FilterQuery<typeof Question> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
       : {};
 
-    // Ensure that 'clerkId' matches the type expected by the User schema
     const user = await User.findOne({ clerkId }).populate({
       path: "saved",
       match: query,
@@ -150,8 +149,8 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
         sort: { createdAt: -1 },
       },
       populate: [
-        { path: "tags", model: "Tag", select: "_id name" }, // Ensure 'Tag' is the correct model name
-        { path: "author", model: "User", select: "_id clerkId name picture" }, // Ensure 'User' is the correct model name
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
       ],
     });
 
