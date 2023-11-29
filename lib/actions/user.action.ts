@@ -11,9 +11,9 @@ import {
   UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
-import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
-import { Tag } from "lucide-react";
+import Question from "@/database/question.model";
+import Tag from "@/database/tag.model";
 
 export async function getUserbyId(params: any) {
   try {
@@ -166,3 +166,12 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     throw error;
   }
 }
+
+// export async function getAllUsers(params: GetAllUsersParams) {
+//   try {
+//     connectToDatabase();
+//   } catch (error) {
+//     console.log(error);
+//     throw error;
+//   }
+// }
