@@ -1,5 +1,5 @@
-import Question from "@/components/forms/Question";
-import { getQuestionById } from "@/lib/actions/question.action";
+import Profile from "@/components/forms/Profile";
+
 import { getUserbyId } from "@/lib/actions/user.action";
 import { ParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs";
@@ -14,17 +14,11 @@ const Page = async ({ params }: ParamsProps) => {
 
   const mongoUser = await getUserbyId({ userId });
 
-  const result = await getQuestionById({ questionId: params.id });
-
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Edit Question</h1>
       <div className="mt-9">
-        <Question
-          type="Edit"
-          mongoUserId={mongoUser}
-          questionDetails={JSON.stringify(result)}
-        />
+        <Profile clerkId={userId} user={JSON.stringify(mongoUser)} />
       </div>
     </>
   );
