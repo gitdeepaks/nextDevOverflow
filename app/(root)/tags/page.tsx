@@ -5,9 +5,12 @@ import Filter from "@/components/shared/Filter";
 import NoResults from "@/components/shared/NoResults";
 import { getAllTags } from "@/lib/actions/tag.actions";
 import Link from "next/link";
+import { SearchParamsProps } from "@/types";
 
-const Page = async () => {
-  const result = await getAllTags({});
+const Page = async ({ searchParams }: SearchParamsProps) => {
+  const result = await getAllTags({
+    searchQuery: searchParams.q,
+  });
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">All Tags</h1>
