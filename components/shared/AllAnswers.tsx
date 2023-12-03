@@ -16,10 +16,19 @@ interface Props {
   filter?: string;
 }
 
-const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
+const AllAnswers = async ({
+  questionId,
+  userId,
+  totalAnswers,
+  page,
+  filter,
+}: Props) => {
   const result = await getAnswers({
     questionId,
+    page: page ? +page : 1,
+    sortBy: filter,
   });
+
   return (
     <div className="mt-11">
       <div className="flex items-center justify-between">
@@ -27,6 +36,7 @@ const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
 
         <Filter filters={AnswerFilters} />
       </div>
+
       <div>
         {result.answers.map((answer) => (
           <article key={answer._id} className="light-border border-b py-10">
@@ -43,10 +53,11 @@ const AllAnswers = async ({ questionId, userId, totalAnswers }: Props) => {
                     alt="profile"
                     className="rounded-full object-cover max-sm:mt-0.5"
                   />
-                  <div className="flex flex-col sm:items-center">
+                  <div className="flex flex-col sm:flex-row sm:items-center">
                     <p className="body-semibold text-dark300_light700">
                       {answer.author.name}
                     </p>
+
                     <p className="small-regular text-light400_light500 ml-0.5 mt-0.5 line-clamp-1">
                       answered {getTimestamp(answer.createdAt)}
                     </p>
