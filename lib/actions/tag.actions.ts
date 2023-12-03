@@ -8,6 +8,7 @@ import {
   DeleteUserParams,
   GetAllTagsParams,
   GetAllUsersParams,
+  GetQuestionsByTagIdParams,
   GetSavedQuestionsParams,
   GetUserByIdParams,
   GetUserStatsParams,
@@ -16,7 +17,7 @@ import {
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
-import Tag from "@/database/tag.model";
+import Tag, { ITag } from "@/database/tag.model";
 import Answer from "@/database/answer.model";
 
 export async function getUserById(params: any) {
@@ -383,6 +384,47 @@ export async function getAllTags(params: GetAllTagsParams) {
     const isNext = totalTags > skipAmount + tags.length;
 
     return { tags, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
+  try {
+    connectToDataBase();
+
+    const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+    const skipAmount = (page - 1) * pageSize;
+
+    const tagFilter: FilterQuery<ITag> = { _id: tagId };
+
+    const tag = await Tag.findOne(tagFilter).populate({
+      path: "questions",
+      model: Question,
+      match: searchQuery
+        ? { title: { $regex: searchQuery, $options: "i" } }
+        : {},
+      options: {
+        sort: { createdAt: -1 },
+        skip: skipAmount,
+        limit: pageSize + 1, // +1 to check if there is next page
+      },
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    });
+
+    if (!tag) {
+      throw new Error("Tag not found");
+    }
+
+    const isNext = tag.questions.length > pageSize;
+
+    const questions = tag.questions;
+
+    return { tagTitle: tag.name, questions, isNext };
   } catch (error) {
     console.log(error);
     throw error;
