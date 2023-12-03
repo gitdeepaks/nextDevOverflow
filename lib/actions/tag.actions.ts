@@ -10,6 +10,7 @@ import {
   GetAllUsersParams,
   GetQuestionsByTagIdParams,
   GetSavedQuestionsParams,
+  GetTopInteractedTagsParams,
   GetUserByIdParams,
   GetUserStatsParams,
   ToggleSaveQuestionParams,
@@ -19,6 +20,29 @@ import { revalidatePath } from "next/cache";
 import Question from "@/database/question.model";
 import Tag, { ITag } from "@/database/tag.model";
 import Answer from "@/database/answer.model";
+
+export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
+  try {
+    connectToDataBase();
+
+    const { userId } = params;
+
+    const user = await User.findById(userId);
+
+    if (!user) throw new Error("User not found");
+
+    // Find interactions for the user and group by tags...
+    // Interaction...
+
+    return [
+      { _id: "1", name: "tag" },
+      { _id: "2", name: "tag2" },
+    ];
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 export async function getUserById(params: any) {
   try {
