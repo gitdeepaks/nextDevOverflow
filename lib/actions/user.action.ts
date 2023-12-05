@@ -1,5 +1,6 @@
 "use server";
 
+import { FilterQuery } from "mongoose";
 import User from "@/database/user.model";
 import { connectToDataBase } from "../mongoose";
 import {
@@ -13,19 +14,20 @@ import {
   UpdateUserParams,
 } from "./shared.types";
 import { revalidatePath } from "next/cache";
-import { FilterQuery } from "mongoose";
 import Question from "@/database/question.model";
 import Tag from "@/database/tag.model";
 import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
 import { assignBadges } from "../utils";
 
-export async function getUserbyId(params: any) {
+export async function getUserById(params: any) {
   try {
     connectToDataBase();
+
     const { userId } = params;
 
     const user = await User.findOne({ clerkId: userId });
+
     return user;
   } catch (error) {
     console.log(error);
@@ -36,50 +38,59 @@ export async function getUserbyId(params: any) {
 export async function createUser(userData: CreateUserParams) {
   try {
     connectToDataBase();
+
     const newUser = await User.create(userData);
+
     return newUser;
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
+
 export async function updateUser(params: UpdateUserParams) {
   try {
     connectToDataBase();
+
     const { clerkId, updateData, path } = params;
 
     await User.findOneAndUpdate({ clerkId }, updateData, {
       new: true,
     });
+
     revalidatePath(path);
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
+
 export async function deleteUser(params: DeleteUserParams) {
   try {
     connectToDataBase();
+
     const { clerkId } = params;
 
     const user = await User.findOneAndDelete({ clerkId });
+
     if (!user) {
       throw new Error("User not found");
     }
-    // delete every thing related to the user
-    // and queestions and answers etc
-    //  get id questions ids
 
-    // const userQuestionIds = await Question.find({
-    //   author: user._id,
-    // }).distinct("_id");
+    // Delete user from database
+    // and questions, answers, comments, etc.
 
-    // delete the questions
-    await Question.deleteMany({ auther: user._id });
+    // get user question ids
+    // const userQuestionIds = await Question.find({ author: user._id}).distinct('_id');
 
-    // TODO: delete the user answers, commets, votes etc
+    // delete user questions
+    await Question.deleteMany({
+      author: user.value._id,
+    });
 
-    const deletedUser = await User.findByIdAndDelete(user._id);
+    // TODO: delete user answers, comments, etc.
+
+    const deletedUser = await User.findByIdAndDelete(user.value._id);
 
     return deletedUser;
   } catch (error) {
@@ -177,7 +188,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDataBase();
 
-    const { clerkId, searchQuery, filter, page = 1, pageSize = 10 } = params;
+    const { clerkId, searchQuery, filter, page = 1, pageSize = 20 } = params;
 
     const skipAmount = (page - 1) * pageSize;
 
@@ -260,8 +271,14 @@ export async function getUserInfo(params: GetUserByIdParams) {
           upvotes: { $size: "$upvotes" },
         },
       },
-      { $group: { _id: null, totalUpvotes: { $sum: "$upvotes" } } },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
     ]);
+
     const [answerUpvotes] = await Answer.aggregate([
       { $match: { author: user._id } },
       {
@@ -270,11 +287,16 @@ export async function getUserInfo(params: GetUserByIdParams) {
           upvotes: { $size: "$upvotes" },
         },
       },
-      { $group: { _id: null, totalUpvotes: { $sum: "$upvotes" } } },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
     ]);
+
     const [questionViews] = await Answer.aggregate([
       { $match: { author: user._id } },
-
       {
         $group: {
           _id: null,
@@ -315,7 +337,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
   }
 }
 
-export async function getUsersQuestion(params: GetUserStatsParams) {
+export async function getUserQuestions(params: GetUserStatsParams) {
   try {
     connectToDataBase();
 
@@ -326,19 +348,15 @@ export async function getUsersQuestion(params: GetUserStatsParams) {
     const totalQuestions = await Question.countDocuments({ author: userId });
 
     const userQuestions = await Question.find({ author: userId })
-      .sort({
-        createdAt: -1,
-        views: -1,
-        upvotes: -1,
-      })
+      .sort({ createdAt: -1, views: -1, upvotes: -1 })
       .skip(skipAmount)
       .limit(pageSize)
       .populate("tags", "_id name")
       .populate("author", "_id clerkId name picture");
 
-    const isNextQuestion = totalQuestions > skipAmount + userQuestions.length;
+    const isNextQuestions = totalQuestions > skipAmount + userQuestions.length;
 
-    return { totalQuestions, questions: userQuestions, isNextQuestion };
+    return { totalQuestions, questions: userQuestions, isNextQuestions };
   } catch (error) {
     console.log(error);
     throw error;
