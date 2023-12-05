@@ -7,6 +7,12 @@ import UserCard from "@/components/cards/UserCard";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Community | NextDevOverFlow",
+};
+
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const result = await getAllUsers({
     searchQuery: searchParams.q,
