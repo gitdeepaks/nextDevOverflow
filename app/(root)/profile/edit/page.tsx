@@ -1,6 +1,6 @@
 import Profile from "@/components/forms/Profile";
 
-import { getUserbyId } from "@/lib/actions/user.action";
+import { getUserById } from "@/lib/actions/user.action";
 import { ParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs";
 import React from "react";
@@ -12,7 +12,7 @@ const Page = async ({ params }: ParamsProps) => {
     return null;
   }
 
-  const mongoUser = await getUserbyId({ userId });
+  const mongoUser = await getUserById({ userId });
 
   return (
     <>
