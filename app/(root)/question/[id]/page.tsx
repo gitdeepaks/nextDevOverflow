@@ -5,7 +5,7 @@ import ParseHTML from "@/components/shared/ParseHTML";
 import RenderTags from "@/components/shared/RenderTags";
 import Votes from "@/components/shared/Votes";
 import { getQuestionById } from "@/lib/actions/question.action";
-import { getUserbyId } from "@/lib/actions/user.action";
+import { getUserById } from "../../../../lib/actions/user.action";
 import { formatAndDivideNumber, getTimestamp } from "@/lib/utils";
 import { auth } from "@clerk/nextjs";
 import Image from "next/image";
@@ -17,7 +17,7 @@ const page = async ({ params, searchParams }: any) => {
 
   let mongoUser;
   if (clerkId) {
-    mongoUser = await getUserbyId({ userId: clerkId });
+    mongoUser = await getUserById({ userId: clerkId });
   }
 
   const result = await getQuestionById({ questionId: params.id });
